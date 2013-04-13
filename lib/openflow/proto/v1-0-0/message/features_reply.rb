@@ -16,18 +16,6 @@ class OpenFlow
             rest :ports
           end # class::Record < BinData::Record
 
-          class Capabilities < BinData::Record
-            endian :big
-            bit1 :flow_stats
-            bit2 :table_stats
-            bit3 :port_stats
-            bit4 :stp
-            bit5 :reserved
-            bit6 :ip_reasm
-            bit7 :queue_stats
-            bit8 :arp_match_ip
-          end
-
           def self.read(d)
             record = Record.read(d)
             o = allocate
@@ -37,36 +25,32 @@ class OpenFlow
           attr_reader :datapath_id, :buffers, :tables, :pad, :capabilities, :actions, :ports
 
           def from_record(record)
-            # TODO convert lower 48-bits to MAC address
-            @datapath_id = record.datapath_id
+            # TODO seperate lower 48 bits from upper 16 bits
+            @datapath_id = record.datapath_id.to_i.to_s(16)
             @buffers     = record.n_buffers
             @tables      = record.n_tables
             @pad         = record.pad
-            # TODO convert bitmask with bitshift ops
-            caps = record.capabilities.to_i.to_s(2)
             @capabilities = {
-              :flow_stats   => caps[0] == "1",
-              :table_stats  => caps[1] == "1",
-              :port_stats   => caps[2] == "1",
-              :stp          => caps[3] == "1",
-              :reserved     => caps[4] == "1",
-              :ip_reasm     => caps[5] == "1",
-              :queue_stats  => caps[6] == "1",
-              :arp_match_ip => caps[7] == "1"
+              :flow_stats   => record.capabilities & 0b1000000000000000 != 0,
+              :table_stats  => record.capabilities & 0b100000000000000 != 0,
+              :port_stats   => record.capabilities & 0b10000000000000 != 0,
+              :stp          => record.capabilities & 0b1000000000000 != 0,
+              :reserved     => record.capabilities & 0b100000000000 != 0,
+              :ip_reasm     => record.capabilities & 0b10000000000 != 0,
+              :queue_stats  => record.capabilities & 0b1000000000 != 0,
+              :arp_match_ip => record.capabilities & 0b100000000 != 0
             }
-            # TODO convert bitmask with bitshift ops
-            actions = record.actions.to_i.to_s(2)
             @actions      = {
-              :set_vlan_id    => actions[0] == "1",
-              :set_vlan_pri   => actions[1] == "1",
-              :strip_vlan_hdr => actions[2] == "1",
-              :mod_ethr_src   => actions[3] == "1",
-              :mod_ethr_dst   => actions[4] == "1",
-              :mod_ipv4_src   => actions[5] == "1",
-              :mod_ipv4_dst   => actions[6] == "1",
-              :mod_ipv4_tos   => actions[7] == "1",
-              :mod_trns_src   => actions[8] == "1",
-              :mod_trns_dst   => actions[9] == "1",
+              :set_vlan_id    => record.actions & 0b100000000000000000 != 0,
+              :set_vlan_pri   => record.actions & 0b10000000000000000 != 0,
+              :strip_vlan_hdr => record.actions & 0b1000000000000000 != 0,
+              :mod_ethr_src   => record.actions & 0b100000000000000 != 0,
+              :mod_ethr_dst   => record.actions & 0b10000000000000 != 0,
+              :mod_ipv4_src   => record.actions & 0b1000000000000 != 0,
+              :mod_ipv4_dst   => record.actions & 0b100000000000 != 0,
+              :mod_ipv4_tos   => record.actions & 0b10000000000 != 0,
+              :mod_trns_src   => record.actions & 0b1000000000 != 0,
+              :mod_trns_dst   => record.actions & 0b100000000 != 0
             }
             # TODO parse ports
             @ports        = record.ports

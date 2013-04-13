@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'eventmachine'
+require 'openflow'
+require 'openflow/em/connection'
+
+
+EventMachine.run do
+  EventMachine.start_server("0.0.0.0", 6633, OpenFlow::Connection) do |of|
+    $stderr.puts "OpenFlow connection #{of.inspect}"
+  end
+end

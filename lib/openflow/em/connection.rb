@@ -61,6 +61,7 @@ class OpenFlow
       else
         extend mixin unless mixin.version == version
         $stderr.puts "Using protocol version #{self.version}"
+        send_features_request
         @heartbeat = EM::PeriodicTimer.new(5) { send_echo_request }
       end
     end
@@ -81,8 +82,8 @@ class OpenFlow
     def proc_msg
       return false if @buffer.length < 8
       header = read_header
-      body   = read_body(header)
       $stderr.puts "  header: #{header.inspect}"
+      body   = read_body(header)
       $stderr.puts "  body: #{body.inspect}"
       handler = "recv_#{header.type}".intern
       if respond_to?(handler, true)

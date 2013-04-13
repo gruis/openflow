@@ -31,7 +31,6 @@ class OpenFlow
           def from_record(record)
             @buffer_id = record.buffer_id
             @length    = record.total_len
-            # TODO parse the port
             @in_port   = record.in_port
             @reason    = REASON[record.reason]
             @pad       = record.pad

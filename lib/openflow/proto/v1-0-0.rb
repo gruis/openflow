@@ -43,6 +43,14 @@ class OpenFlow
         $stderr.puts "PACKET_IN: #{body.inspect}"
       end
 
+      def send_features_request
+        send_data(:features_request, @xid.next)
+      end
+
+      def recv_features_reply(header, body)
+        $stderr.puts "FEATURES: #{body.inspect}"
+      end
+
     end # module::V0x01
   end # module::Proto
 end # class::OpenFlow

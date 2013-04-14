@@ -2,6 +2,7 @@ require 'openflow/proto'
 
 class OpenFlow
   class Connection < EM::Connection
+    include EM::Deferrable
 
     SUPPORT_MSG = "We support version 0x%02X to 0x%02X inclusive" % [Proto.min_version, Proto.max_version]
 
@@ -32,16 +33,16 @@ class OpenFlow
     def send_data(type, xid, body = nil)
       len = 8
       if body
-        body = body.to_binary unless body.is_a?(String)
+        body = body.to_binary_s unless body.is_a?(String)
         len += body.length
       end
       header = build_header(type, version, len, xid)
-      msg = "#{header.to_binary}#{body}"
+      msg = "#{header.to_binary_s}#{body}"
       $stderr.puts "send: #{msg.inspect}"
       $stderr.puts "  send header: #{header.inspect}"
       $stderr.puts "  send body: #{body.inspect}"
       super(msg)
-      msg
+      xid
     end
 
 
@@ -58,11 +59,14 @@ class OpenFlow
         data = "#{SUPPORT_MSG} but you support no later than version 0x%02X" % header.version
         send_error(:hello_failed, :incompatible, header.xid, data)
         close_connection(true)
+        fail "hello failed: switch max version (0x%02X) is less than local min version (0x%02X)" % [header.version, Proto.min_version]
       else
+        # FIXME succeed is called if local version is less than remote max version AND remove min version
         extend mixin unless mixin.version == version
         $stderr.puts "Using protocol version #{self.version}"
         send_features_request
         @heartbeat = EM::PeriodicTimer.new(5) { send_echo_request }
+        succeed
       end
     end
 
@@ -72,6 +76,9 @@ class OpenFlow
         $stderr.puts "Protocol negotiation failed: #{body.data}"
         @heartbeat && @heartbeat.cancel
         close_connection(true)
+        # FIXME succeed is called in recv_hello if local version is less than remote max version in which case this call to fail
+        #       will not have an effect
+        fail "hello failed: switch min version is greater than local max version (0x%02X)" % [Proto.max_version.to_s(16)]
       end
     end
 
@@ -82,9 +89,9 @@ class OpenFlow
     def proc_msg
       return false if @buffer.length < 8
       header = read_header
-      $stderr.puts "  header: #{header.inspect}"
+      #$stderr.puts "  header: #{header.inspect}"
       body   = read_body(header)
-      $stderr.puts "  body: #{body.inspect}"
+      #$stderr.puts "  body: #{body.inspect}"
       handler = "recv_#{header.type}".intern
       if respond_to?(handler, true)
         send(handler, header, body)

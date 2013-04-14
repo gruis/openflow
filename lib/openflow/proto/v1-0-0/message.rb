@@ -15,8 +15,11 @@ class OpenFlow
           end
 
           def parse(type, body)
-            raise NotImplementedError.new("Unsupported message type #{type.inspect}") unless @types[type]
-            @types[type].read(body)
+            t = type.intern
+            unless @types.include?(t)
+              raise NotImplementedError.new("Unsupported message type #{t.inspect}; #{@types.keys}")
+            end
+            @types[t].read(body)
           end
         end # class << self
 

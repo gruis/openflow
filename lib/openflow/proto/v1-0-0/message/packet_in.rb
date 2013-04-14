@@ -2,41 +2,38 @@ class OpenFlow
   module Proto
     module V0x01
       class Message
-        class PacketIn
+        class PacketIn < BinData::Record
+
+          class PacketInReason < BinData::BasePrimitive
+            REASONS = [
+              :no_match,
+              :action
+            ]
+
+            def sensible_default
+              nil
+            end
+
+            def read_and_return_value(io)
+              type = io.readbytes(1).unpack("C")[0]
+              REASONS[type]
+            end
+
+            def value_to_binary_string(value)
+              [REASONS.index(value)].pack("C")
+            end
+          end # class::PacketInReason < BinData::BasePrimitive
+
           include Base
 
-          class Record < BinData::Record
-            endian :big
-            uint32 :buffer_id
-            uint16 :total_len
-            uint16 :in_port
-            uint8 :reason
-            uint8 :pad
-            string :data, :read_length => :total_len
-          end # class::Record < BinData::Record
+          endian :big
+          uint32 :buffer_id
+          uint16 :total_len
+          uint16 :in_port
+          packet_in_reason :reason
+          uint8 :pad
+          string :data, :read_length => :total_len
 
-          def self.read(d)
-            record = Record.read(d)
-            o = allocate
-            o.from_record(record)
-          end
-
-          REASON = [
-            :no_match,
-            :action
-          ]
-
-          attr_reader :buffer_id, :length, :in_port, :reason, :pad, :data
-
-          def from_record(record)
-            @buffer_id = record.buffer_id
-            @length    = record.total_len
-            @in_port   = record.in_port
-            @reason    = REASON[record.reason]
-            @pad       = record.pad
-            @data      = record.data
-            self
-          end
         end # class::PacketIn
       end # class::Message
     end # module::V0x01

@@ -5,8 +5,17 @@ require 'openflow'
 require 'openflow/em/connection'
 
 
-EventMachine.run do
+
+EM.run do
   EventMachine.start_server("0.0.0.0", 6633, OpenFlow::Connection) do |of|
     $stderr.puts "OpenFlow connection #{of.inspect}"
+    of.callback do 
+      #of.send_set_config({:frag_normal => true}, 65535)
+      of.send_get_config_request
+    end
+    of.errback do |err|
+      $stderr.puts "!!! ERROR: #{err}"
+      EM.stop
+    end
   end
 end

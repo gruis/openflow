@@ -25,4 +25,3 @@ class OpenFlow
     end # module::V0x01
   end # module::Proto
 end # class::OpenFlow
-

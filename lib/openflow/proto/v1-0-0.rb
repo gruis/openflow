@@ -1,6 +1,5 @@
 require "openflow/proto/v1-0-0/message"
 require "openflow/proto/v1-0-0/port"
-require "pp"
 
 class OpenFlow
   module Proto
@@ -50,9 +49,7 @@ class OpenFlow
       end
 
       def recv_features_reply(header, body)
-        #$stderr.puts "FEATURES: #{body.inspect}"
-        #pp body
-        $stderr.puts "datapath_id: #{body.datapath_id.inspect}"
+        $stderr.puts "FEATURES: #{body.inspect}"
       end
 
     end # module::V0x01

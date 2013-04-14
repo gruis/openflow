@@ -12,10 +12,7 @@ class OpenFlow
           include Base
 
           endian :big
-          uint64 :datapath_id
-          # TODO build datapath id type
-          #    @datapath_id  = record.datapath_id.to_i.to_s(16)
-          #datapath_id :datapath_id
+          datapath_id :datapath_id
           uint32 :n_buffers
           uint8 :n_tables
           array :pad, :type => :uint8, :initial_length => 3

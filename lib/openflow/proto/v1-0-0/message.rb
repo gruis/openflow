@@ -28,7 +28,7 @@ class OpenFlow
   end # module::Proto
 end # class::OpenFlow
 
-require "openflow/proto/v1-0-0/message/error/base"
+require "openflow/proto/v1-0-0/message/base"
 Dir[File.expand_path("../message/*.rb", __FILE__)].each do |f|
   require f
 end

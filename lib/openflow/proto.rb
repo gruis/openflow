@@ -58,7 +58,7 @@ class OpenFlow
   end # module::Proto
 end # class::OpenFlow
 
-# Augment any Protos that were requried before Proto
+# Augment any Protos that were required before Proto
 OpenFlow::Proto.protos.each do |p|
   OpenFlow::Proto.included(p)
 end

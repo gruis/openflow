@@ -3,6 +3,8 @@
 OpenFlow Ruby is a Ruby implementation of a the [OpenFlow](http://www.openflow.org/) [protocol](https://www.opennetworking.org/sdn-resources/onf-specifications/openflow). 
 It may include an OpenFlow controller web application and REST API.
 
+[![Build Status](https://travis-ci.org/simulacre/openflow.png?branch=master)](https://travis-ci.org/simulacre/openflow)
+[![Code Climate](https://codeclimate.com/github/simulacre/openflow.png)](https://codeclimate.com/github/simulacre/openflow)
 
 ## Supported Versions
 

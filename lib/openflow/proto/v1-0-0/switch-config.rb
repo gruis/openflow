@@ -34,6 +34,7 @@ class OpenFlow
         end # class::OfpConfigFlags < BinData::BasePrimitive
 
         endian :big
+        # TODO convert to enum
         ofp_config_flags :flags
         uint16 :miss_send_len
 

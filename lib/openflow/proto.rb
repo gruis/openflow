@@ -1,5 +1,6 @@
 require "bindata"
 require 'openflow/enum'
+require 'openflow/bitmask'
 require 'openflow/proto/v1-0-0'
 require 'openflow/proto/v1-1-0'
 require 'openflow/proto/v1-2'

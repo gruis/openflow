@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'http://github.com/simulacre/openflow'
   s.email         = 'openflow@simulacre.org'
   s.authors       = ['Caleb Crane']
-  s.files         = Dir["lib/**/*.rb", "bin/*", "*.md"]
+  s.files         = Dir["lib/**/*.rb", "bin/*", "*.md", "LICENSE.txt"]
   s.require_paths = ["lib"]
   s.executables   = Dir["bin/*"].map{|p| p.split("bin/",2)[1] }
 

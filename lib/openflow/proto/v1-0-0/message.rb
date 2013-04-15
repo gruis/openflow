@@ -28,6 +28,6 @@ class OpenFlow
   end # module::Proto
 end # class::OpenFlow
 
-Dir[File.expand_path("../message/", __FILE__) + "**/*.rb"].each do |f|
+Dir[File.expand_path("../message/*.rb", __FILE__)].each do |f|
   require f
 end

@@ -1,7 +1,7 @@
 require "openflow/mac-addr"
-Dir[File.expand_path("../port/", __FILE__) + "**/*.rb"].each do |f|
-  require f
-end
+require "openflow/proto/v1-0-0/port/port_config"
+require "openflow/proto/v1-0-0/port/port_features"
+require "openflow/proto/v1-0-0/port/port_state"
 
 class OpenFlow
   module Proto

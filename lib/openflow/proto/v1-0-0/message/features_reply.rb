@@ -1,8 +1,7 @@
 require "openflow/proto/datapath-id"
 require "openflow/proto/v1-0-0/port"
-Dir[File.join(File.expand_path("../features_reply", __FILE__), "**/*.rb")].each do |f|
-  require f
-end
+require "openflow/proto/v1-0-0/message/features_reply/actions"
+require "openflow/proto/v1-0-0/message/features_reply/capabilities"
 
 class OpenFlow
   module Proto
